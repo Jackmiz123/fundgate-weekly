@@ -1,11 +1,17 @@
 FROM python:3.11-slim
 
-# Install LibreOffice for PDF conversion
+# Install LibreOffice + Microsoft core fonts (Times New Roman, Calibri, etc.)
 RUN apt-get update && apt-get install -y \
     libreoffice \
+    fonts-liberation \
+    fonts-crosextra-carlito \
+    fonts-crosextra-caladea \
+    ttf-mscorefonts-installer \
+    fontconfig \
     --no-install-recommends \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && fc-cache -f -v
 
 WORKDIR /app
 COPY . .
