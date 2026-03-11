@@ -40,6 +40,8 @@
   select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a99' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
   .input-prefix{position:relative;}
   .input-prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none;}
+  input:not(#Owner_Guarantor_1):not(#Merchant_1):not(#Authorized_Signer_Name):not(#Title){text-transform:uppercase;}
+select{text-transform:uppercase;}
   .input-prefix input{padding-left:24px;}
   .section-divider{border:none;border-top:1px solid var(--border);margin:14px 0;grid-column:1/-1;}
   .section-label{grid-column:1/-1;font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;display:flex;align-items:center;justify-content:space-between;}
@@ -231,6 +233,13 @@ function fv(id) { const el = document.getElementById(id); return el ? el.value.t
 function formatDate(d) { if (!d) return ''; const [y,m,day] = d.split('-'); return m+'/'+day+'/'+y; }
 
 // Format a number with commas and 2 decimal places
+function fmtPhone(v) {
+  const d = v.replace(/\D/g,'').slice(0,10);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return d.slice(0,3)+'-'+d.slice(3);
+  return d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);
+}
+
 function fmtMoney(val) {
   if (!val) return '';
   const n = parseFloat(val.toString().replace(/[^0-9.]/g, ''));
@@ -309,15 +318,15 @@ function buildReview() {
 function getData() {
   return {
     Agreement_Date: formatDate(fv('Agreement_Date')),
-    Merchant_Legal_Name: fv('Merchant_Legal_Name'),
-    Merchant_DBA: fv('Merchant_DBA'),
-    Entity_Type: fv('Entity_Type'),
-    State_of_Organization: fv('State_of_Organization'),
-    Executive_Office_Address: fv('Executive_Office_Address'),
-    Mailing_Address: fv('Mailing_Address') || fv('Executive_Office_Address'),
+    Merchant_Legal_Name: (fv('Merchant_Legal_Name')||'').toUpperCase(),
+    Merchant_DBA: (fv('Merchant_DBA')||'').toUpperCase(),
+    Entity_Type: (fv('Entity_Type')||'').toUpperCase(),
+    State_of_Organization: (fv('State_of_Organization')||'').toUpperCase(),
+    Executive_Office_Address: (fv('Executive_Office_Address')||'').toUpperCase(),
+    Mailing_Address: (fv('Mailing_Address') || fv('Executive_Office_Address')||'').toUpperCase(),
     Business_Start_Date: fv('Business_Start_Date'),
     Federal_EIN: fmtEIN(fv('Federal_EIN')),
-    Business_Phone: fv('Business_Phone'),
+    Business_Phone: fmtPhone(fv('Business_Phone')||''),
     Purchase_Price: fmtMoney(fv('Purchase_Price')),
     Purchased_Amount: fmtMoney(fv('Purchased_Amount')),
     Specified_Percentage: fmtPct(fv('Specified_Percentage')),
@@ -330,7 +339,7 @@ function getData() {
     Repurchase_31_60_Day_Amount: fmtMoney(fv('Repurchase_31_60_Day_Amount')),
     After_60_Day_Amount: fmtMoney(fv('After_60_Day_Amount')),
     Addendum_Date: formatDate(fv('Addendum_Date')),
-    Bank_Name: fv('Bank_Name'),
+    Bank_Name: (fv('Bank_Name')||'').toUpperCase(),
     Routing_Number: fv('Routing_Number'),
     Account_Number: fv('Account_Number'),
     Authorized_Signer_Name: fv('Authorized_Signer_Name'),
